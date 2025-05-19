@@ -30,6 +30,102 @@
     }
 ---
 
+ 349. 两个数组的交集 
+
+建议：本题就开始考虑 什么时候用set 什么时候用数组，本题其实是使用set的好题，但是后来力扣改了题目描述和 测试用例，添加了 0 <= nums1[i], nums2[i] <= 1000 条件，所以使用数组也可以了，不过建议大家忽略这个条件。 尝试去使用set。 
+
+// 与字母一样，数字也是某个位置叠加，异曲同工
+public int[] intersection(int[] nums1, int[] nums2) {
+           int[] hash1 = new int[1001];
+        int[] hash2 = new int[1001];
+        for(int i : nums1) {
+            hash1[i]++;
+        }
+        for(int i : nums2) {
+            hash2[i]++;
+        }
+        List<Integer> resList = new ArrayList<>();
+        for(int i = 0; i < 1001; i++) {
+            if(hash1[i] > 0 && hash2[i] > 0) {
+                resList.add(i);
+            }
+        }
+        int index = 0;
+        int res[] = new int[resList.size()];
+        for(int i : resList) {
+            res[index++] = i;
+        }
+        return res;  
+    }
+
+---
+第202题. 快乐数
+
+编写一个算法来判断一个数 n 是不是快乐数。
+
+「快乐数」定义为：对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和，然后重复这个过程直到这个数变为 1，也可能是 无限循环 但始终变不到 1。如果 可以变为  1，那么这个数就是快乐数。
+
+如果 n 是快乐数就返回 True ；不是，则返回 False 。
+
+示例：
+
+输入：19
+输出：true
+解释：
+1^2 + 9^2 = 82
+8^2 + 2^2 = 68
+6^2 + 8^2 = 100
+1^2 + 0^2 + 0^2 = 1
+
+---
+// 还是要考虑到hashset，针对无限循环重复的
+   public boolean isHappy(int n) {
+        Set<Integer> record = new HashSet<>();
+        while (n != 1 && !record.contains(n)) {
+            record.add(n);
+            n = getNextNumber(n);
+        }
+        return n == 1;
+    }
+
+    private int getNextNumber(int n) {
+        int res = 0;
+        while (n > 0) {
+            int temp = n % 10;
+            res += temp * temp;
+            n = n / 10;
+        }
+        return res;
+    }
+}
+---
+1. 两数之和
+给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那 两个 整数，并返回他们的数组下标。
+
+你可以假设每种输入只会对应一个答案。但是，数组中同一个元素不能使用两遍。
+
+示例:
+
+给定 nums = [2, 7, 11, 15], target = 9
+
+因为 nums[0] + nums[1] = 2 + 7 = 9
 
 
-    
+ //使用哈希表
+    public int[] twoSum(int[] nums, int target) {
+        int[] res = new int[2];
+        if(nums == null || nums.length == 0){
+            return res;
+        }
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int i = 0; i < nums.length; i++){
+            int temp = target - nums[i];   // 遍历当前元素，并在map中寻找是否有匹配的key
+            if(map.containsKey(temp)){
+                res[1] = i;
+                res[0] = map.get(temp);
+                break;
+            }
+            map.put(nums[i], i);    // 如果没找到匹配对，就把访问过的元素和下标加入到map中
+        }
+        return res;
+    }
