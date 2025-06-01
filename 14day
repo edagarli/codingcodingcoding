@@ -1,0 +1,265 @@
+
+翻转二叉树
+ /**
+     * 前后序遍历都可以
+     * 中序不行，因为先左孩子交换孩子，再根交换孩子（做完后，右孩子已经变成了原来的左孩子），再右孩子交换孩子（此时其实是对原来的左孩子做交换）
+     */
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        invertTree(root.left);
+        invertTree(root.right);
+        swapChildren(root);
+        return root;
+    }
+
+    private void swapChildren(TreeNode root) {
+        TreeNode tmp = root.left;
+        root.left = root.right;
+        root.right = tmp;
+    }
+
+    public TreeNode invertTre2(TreeNode root) {
+        if (root == null) {return null;}
+        ArrayDeque<TreeNode> deque = new ArrayDeque<>();
+        deque.offer(root);
+        while (!deque.isEmpty()) {
+            int size = deque.size();
+            while (size-- > 0) {
+                TreeNode node = deque.poll();
+                swap(node);
+                if (node.left != null) deque.offer(node.left);
+                if (node.right != null) deque.offer(node.right);
+            }
+        }
+        return root;
+    }
+
+    public void swap(TreeNode root) {
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+    }
+
+对称二叉树
+
+
+package codecode;
+
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Queue;
+
+
+public class IsSymmetric11402 {
+
+
+    /**
+     * 递归法
+     */
+    public boolean isSymmetric1(TreeNode root) {
+        return compare(root.left, root.right);
+    }
+
+    private boolean compare(TreeNode left, TreeNode right) {
+
+        if (left == null && right != null) {
+            return false;
+        }
+        if (left != null && right == null) {
+            return false;
+        }
+
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left.val != right.val) {
+            return false;
+        }
+        // 比较外侧
+        boolean compareOutside = compare(left.left, right.right);
+        // 比较内侧
+        boolean compareInside = compare(left.right, right.left);
+        return compareOutside && compareInside;
+    }
+
+    /**
+     * 迭代法
+     * 使用双端队列，相当于两个栈
+     */
+    public boolean isSymmetric2(TreeNode root) {
+        Deque<TreeNode> deque = new LinkedList<>();
+        deque.offerFirst(root.left);
+        deque.offerLast(root.right);
+        while (!deque.isEmpty()) {
+            TreeNode leftNode = deque.pollFirst();
+            TreeNode rightNode = deque.pollLast();
+            if (leftNode == null && rightNode == null) {
+                continue;
+            }
+            //            if (leftNode == null && rightNode != null) {
+            //                return false;
+            //            }
+            //            if (leftNode != null && rightNode == null) {
+            //                return false;
+            //            }
+            //            if (leftNode.val != rightNode.val) {
+            //                return false;
+            //            }
+            // 以上三个判断条件合并
+            if (leftNode == null || rightNode == null || leftNode.val != rightNode.val) {
+                return false;
+            }
+            deque.offerFirst(leftNode.left);
+            deque.offerFirst(leftNode.right);
+            deque.offerLast(rightNode.right);
+            deque.offerLast(rightNode.left);
+        }
+        return true;
+    }
+
+    /**
+     * 迭代法
+     * 使用普通队列
+     */
+    public boolean isSymmetric3(TreeNode root) {
+        Queue<TreeNode> deque = new LinkedList<>();
+        deque.offer(root.left);
+        deque.offer(root.right);
+        while (!deque.isEmpty()) {
+            TreeNode leftNode = deque.poll();
+            TreeNode rightNode = deque.poll();
+            if (leftNode == null && rightNode == null) {
+                continue;
+            }
+            //            if (leftNode == null && rightNode != null) {
+            //                return false;
+            //            }
+            //            if (leftNode != null && rightNode == null) {
+            //                return false;
+            //            }
+            //            if (leftNode.val != rightNode.val) {
+            //                return false;
+            //            }
+            // 以上三个判断条件合并
+            if (leftNode == null || rightNode == null || leftNode.val != rightNode.val) {
+                return false;
+            }
+            // 这里顺序与使用Deque不同
+            deque.offer(leftNode.left);
+            deque.offer(rightNode.right);
+            deque.offer(leftNode.right);
+            deque.offer(rightNode.left);
+        }
+        return true;
+    }
+
+}
+
+最大深度
+   /**
+     * 递归法
+     */
+    public int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int leftDepth = maxDepth(root.left);
+        int rightDepth = maxDepth(root.right);
+        return Math.max(leftDepth, rightDepth) + 1;
+    }
+
+
+    559.n叉树的最大深度
+
+  /*递归法，后序遍历求root节点的高度*/
+    public int maxDepth(Node root) {
+        if (root == null) return 0;
+
+        int depth = 0;
+        if (root.children != null){
+            for (Node child : root.children){
+                depth = Math.max(depth, maxDepth(child));
+            }
+        }
+
+        return depth + 1; //中节点
+    }  
+
+      /**
+     * 迭代法，使用层序遍历
+     */
+    public int maxDepth(Node root) {
+        if (root == null)   return 0;
+        int depth = 0;
+        Queue<Node> que = new LinkedList<>();
+        que.offer(root);
+        while (!que.isEmpty())
+        {
+            depth ++;
+            int len = que.size();
+            while (len > 0)
+            {
+                Node node = que.poll();
+                for (int i = 0; i < node.children.size(); i++)
+                    if (node.children.get(i) != null) 
+                        que.offer(node.children.get(i));
+                len--;
+            }
+        }
+        return depth;
+    }
+
+
+    最小深度
+
+      /**
+     * 迭代法，层序遍历
+     */
+    public int minDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        Deque<TreeNode> deque = new LinkedList<>();
+        deque.offer(root);
+        int depth = 0;
+        while (!deque.isEmpty()) {
+            int size = deque.size();
+            depth++;
+            for (int i = 0; i < size; i++) {
+                TreeNode poll = deque.poll();
+                if (poll.left == null && poll.right == null) {
+                    // 是叶子结点，直接返回depth，因为从上往下遍历，所以该值就是最小值
+                    return depth;
+                }
+                if (poll.left != null) {
+                    deque.offer(poll.left);
+                }
+                if (poll.right != null) {
+                    deque.offer(poll.right);
+                }
+            }
+        }
+        return depth;
+    }
+
+     /**
+     * 递归法，相比求MaxDepth要复杂点
+     * 因为最小深度是从根节点到最近**叶子节点**的最短路径上的节点数量
+     */
+    public int minDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int leftDepth = minDepth(root.left);
+        int rightDepth = minDepth(root.right);
+        if (root.left == null) {
+            return rightDepth + 1;
+        }
+        if (root.right == null) {
+            return leftDepth + 1;
+        }
+        // 左右结点都不为null
+        return Math.min(leftDepth, rightDepth) + 1;
+    }
