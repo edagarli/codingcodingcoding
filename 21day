@@ -1,5 +1,7 @@
 //669. 修剪二叉搜索树
 
+// 注意有序的特殊性，其实不在之间return null
+
    public TreeNode trimBST(TreeNode root, int low, int high) {
         if (root == null) {
             return null;
