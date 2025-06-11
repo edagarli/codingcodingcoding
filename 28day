@@ -1,0 +1,76 @@
+// 股票买卖
+
+// 贪心思路
+class Solution {
+    public int maxProfit(int[] prices) {
+        int result = 0;
+        for (int i = 1; i < prices.length; i++) {
+            result += Math.max(prices[i] - prices[i - 1], 0);
+        }
+        return result;
+    }
+}、、
+
+
+//55. 跳跃游戏
+这道题目关键点在于：不用拘泥于每次究竟跳几步，而是看覆盖范围，覆盖范围内一定是可以跳过来的，不用管是怎么跳的。
+
+
+
+class Solution {
+    public boolean canJump(int[] nums) {
+        if (nums.length == 1) {
+            return true;
+        }
+        //覆盖范围, 初始覆盖范围应该是0，因为下面的迭代是从下标0开始的
+        int coverRange = 0;
+        //在覆盖范围内更新最大的覆盖范围
+        for (int i = 0; i <= coverRange; i++) {
+            coverRange = Math.max(coverRange, i + nums[i]);
+            if (coverRange >= nums.length - 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+//// 跳跃游戏2
+
+package org.example.test28;
+
+public class Jump {
+
+    public static void main(String[] args) {
+        int[] nums = new int[]{4, 1, 1, 1, 1, 3};
+        System.out.println(jump(nums));
+    }
+
+    public static int jump(int[] nums) {
+        if (nums == null || nums.length == 0 || nums.length == 1) {
+            return 0;
+        }
+        //记录跳跃的次数
+        int count=0;
+        //当前的覆盖最大区域
+        int curDistance = 0;
+        //最大的覆盖区域
+        int maxDistance = 0;
+        for (int i = 0; i < nums.length; i++) {
+            //在可覆盖区域内更新最大的覆盖区域
+            maxDistance = Math.max(maxDistance,i+nums[i]);
+            //说明当前一步，再跳一步就到达了末尾
+            if (maxDistance>=nums.length-1){
+                count++;
+                break;
+            }
+            //走到当前覆盖的最大区域时，更新下一步可达的最大区域
+            if (i==curDistance){
+                curDistance = maxDistance;
+                count++;
+            }
+        }
+        return count;
+    }
+
+}
