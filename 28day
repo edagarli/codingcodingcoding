@@ -74,3 +74,73 @@ public class Jump {
     }
 
 }
+
+
+//1005.K次取反后最大化的数组和
+
+package org.example.test28;
+
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
+public record LargestSumAfterKNegations() {
+
+    public static void main(String[] args) {
+
+        int[] array = IntStream.range(-10, 10).toArray();
+        System.out.println(Arrays.toString(array));
+        System.out.println(largestSumAfterKNegations(array, 14));
+        System.out.println(largestSumAfterKNegations1(array, 14));
+    }
+
+    public static int largestSumAfterKNegations(int[] nums, int K) {
+        // 将数组按照绝对值大小从大到小排序，注意要按照绝对值的大小
+        nums = IntStream.of(nums)
+                .boxed()
+                .sorted((o1, o2) -> Math.abs(o2) - Math.abs(o1))
+                .mapToInt(Integer::intValue).toArray();
+        int len = nums.length;
+        for (int i = 0; i < len; i++) {
+            //从前向后遍历，遇到负数将其变为正数，同时K--
+            if (nums[i] < 0 && K > 0) {
+                nums[i] = -nums[i];
+                K--;
+            }
+        }
+        // 如果K还大于0，那么反复转变数值最小的元素，将K用完 // K还有剩余次数，且为奇数次(偶数次反转后还是正数，不需要考虑)
+
+        if (K % 2 == 1) nums[len - 1] = -nums[len - 1];
+        return Arrays.stream(nums).sum();
+
+    }
+
+    public static int largestSumAfterKNegations1(int[] nums, int k) {
+        if (nums.length == 1) return nums[0];
+
+        // 排序：先把负数处理了
+        Arrays.sort(nums);
+
+        for (int i = 0; i < nums.length && k > 0; i++) { // 贪心点, 通过负转正, 消耗尽可能多的k
+            if (nums[i] < 0) {
+                nums[i] = -nums[i];
+                k--;
+            }
+        }
+
+        // 退出循环, k > 0 || k < 0 (k消耗完了不用讨论)
+        if (k % 2 == 1) { // k > 0 && k is odd：对于负数：负-正-负-正
+            Arrays.sort(nums); // 再次排序得到剩余的负数，或者最小的正数
+            nums[0] = -nums[0];
+        }
+        // k > 0 && k is even，flip数字不会产生影响: 对于负数: 负-正-负；对于正数：正-负-正
+
+        int sum = 0;
+        for (int num : nums) { // 计算最大和
+            sum += num;
+        }
+        return sum;
+    }
+
+
+}
+
