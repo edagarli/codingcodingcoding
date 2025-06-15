@@ -18,4 +18,104 @@
 
 
 
-// 
+// package org.example.test29;
+
+class Solution {
+    /**
+         分两个阶段
+         1、起点下标1 从左往右，只要 右边 比 左边 大，右边的糖果=左边 + 1
+         2、起点下标 ratings.length - 2 从右往左， 只要左边 比 右边 大，此时 左边的糖果应该 取本身的糖果数（符合比它左边大） 和 右边糖果数 + 1 二者的最大值，这样才符合 它比它左边的大，也比它右边大
+    */
+    public int candy(int[] ratings) {
+        int len = ratings.length;
+        int[] candyVec = new int[len];
+        candyVec[0] = 1;
+        for (int i = 1; i < len; i++) {
+            candyVec[i] = (ratings[i] > ratings[i - 1]) ? candyVec[i - 1] + 1 : 1;
+        }
+
+        for (int i = len - 2; i >= 0; i--) {
+            if (ratings[i] > ratings[i + 1]) {
+                candyVec[i] = Math.max(candyVec[i], candyVec[i + 1] + 1);
+            }
+        }
+
+        int ans = 0;
+        for (int num : candyVec) {
+            ans += num;
+        }
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new Solution().candy(new int[]{1, 0, 3}));
+    }
+
+}
+
+
+//
+class Solution {
+    public boolean lemonadeChange(int[] bills) {
+        int five = 0;
+        int ten = 0;
+
+        for (int i = 0; i < bills.length; i++) {
+            if (bills[i] == 5) {
+                five++;
+            } else if (bills[i] == 10) {
+                five--;
+                ten++;
+            } else if (bills[i] == 20) {
+                if (ten > 0) {
+                    ten--;
+                    five--;
+                } else {
+                    five -= 3;
+                }
+            }
+            if (five < 0 || ten < 0) return false;
+        }
+        
+        return true;
+    }
+
+
+
+package org.example.test29;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+
+public class ReconstructQueue {
+
+    public static int[][] reconstructQueue(int[][] people) {
+        // 身高从大到小排（身高相同k小的站前面）
+        Arrays.sort(people, (a, b) -> {
+            if (a[0] == b[0]) return a[1] - b[1];   // a - b 是升序排列，故在a[0] == b[0]的狀況下，會根據k值升序排列
+            return b[0] - a[0];   //b - a 是降序排列，在a[0] != b[0]，的狀況會根據h值降序排列
+        });
+
+        LinkedList<int[]> que = new LinkedList<>();
+
+        for (int[] p : people) {
+            que.add(p[1],p);   //Linkedlist.add(index, value)，會將value插入到指定index裡。
+        }
+
+        return que.toArray(new int[people.length][]);
+    }
+
+    public static void main(String[] args) {
+
+        int[][] people = new int[][]{
+                {7,0},{4,4},{7,1},{5,0},{6,1},{5,2}
+        };
+
+        reconstructQueue(people);
+    }
+}
+
+
+}
+
+
